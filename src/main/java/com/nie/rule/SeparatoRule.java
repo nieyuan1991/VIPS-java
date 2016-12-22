@@ -7,7 +7,7 @@ import com.nie.vo.SeparatorVo;
 public class SeparatoRule {
 
 	/**
-	 * ÊÓ¾õ¿éÍêÈ«ÔÚ·Ö¸ô·ûÄÚµÄ
+	 * ï¿½Ó¾ï¿½ï¿½ï¿½ï¿½ï¿½È«ï¿½Ú·Ö¸ï¿½ï¿½ï¿½ï¿½Úµï¿½
 	 * @param box
 	 * @param sep
 	 * @return
@@ -15,14 +15,13 @@ public class SeparatoRule {
 	public static boolean horizontalRule1(Box box, SeparatorVo sep) {
 		int y = box.getAbsoluteContentY();
 		if (y > sep.getY() && (box.getHeight() + y) < (sep.getHeight() + sep.getY())) {
-			System.out.println("111111111111111111111111111111111111111");
 			return true;
 		}
 		return false;
 	}
 	
 	/**
-	 * ÊÓ¾õ¿ì×ÝÏò´©¹ý·Ö¸ô·û
+	 * ï¿½Ó¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ò´©¹ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½
 	 * @param box
 	 * @param sep
 	 * @return
@@ -30,14 +29,13 @@ public class SeparatoRule {
 	public static boolean horizontalRule2(Box box, SeparatorVo sep) {
 		int y = box.getAbsoluteContentY();
 		if (y < sep.getY() && (box.getHeight() + y) > (sep.getHeight() + sep.getY())) {
-			System.out.println("222222222222222222222222222222222222222");
 			return true;
 		}
 		return false;
 	}
 	
 	/**
-	 * ÊÓ¾õ¿éÏÂ²¿ºÍ·Ö¸ô·ûÖØºÏ
+	 * ï¿½Ó¾ï¿½ï¿½ï¿½ï¿½Â²ï¿½ï¿½Í·Ö¸ï¿½ï¿½ï¿½ï¿½Øºï¿½
 	 * @param box
 	 * @param sep
 	 * @return
@@ -47,14 +45,13 @@ public class SeparatoRule {
 		int LBY=y + box.getHeight();
 		int sepRLY=sep.getY() + sep.getHeight();
 		if (y < sep.getY() && LBY > sep.getY() && LBY < sepRLY) {
-			System.out.println("333333333333333333333333333333333333333");
 			return true;
 		}
 		return false;
 	}
 	
 	/**
-	 * ÊÓ¾õ¿éÉÏ²¿ºÍ·Ö¸ô·ûÖØºÏ
+	 * ï¿½Ó¾ï¿½ï¿½ï¿½ï¿½Ï²ï¿½ï¿½Í·Ö¸ï¿½ï¿½ï¿½ï¿½Øºï¿½
 	 * @param box
 	 * @param sep
 	 * @return
@@ -64,7 +61,66 @@ public class SeparatoRule {
 		int LBY=y + box.getHeight();
 		int sepLBY=sep.getY() + sep.getHeight();
 		if (y > sep.getY() && y < sepLBY && LBY > sepLBY) {
-			System.out.println("44444444444444444444444444444444444444");
+			return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * ï¿½Ó¾ï¿½ï¿½ï¿½ï¿½ï¿½È«ï¿½Ú·Ö¸ï¿½ï¿½ï¿½ï¿½Úµï¿½
+	 * @param box
+	 * @param sep
+	 * @return
+	 */
+	public static boolean verticalRule1(Box box, SeparatorVo sep) {
+		int x = box.getAbsoluteContentX();
+		if (x > sep.getX() && (box.getWidth() + x) < (sep.getWidth() + sep.getX())) {
+			return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * ï¿½Ó¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ò´©¹ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½
+	 * @param box
+	 * @param sep
+	 * @return
+	 */
+	public static boolean verticalRule2(Box box, SeparatorVo sep) {
+		int x = box.getAbsoluteContentX();
+		if (x < sep.getX() && (box.getWidth() + x) > (sep.getWidth() + sep.getX())) {
+			return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * ï¿½Ó¾ï¿½ï¿½ï¿½ï¿½Â²ï¿½ï¿½Í·Ö¸ï¿½ï¿½ï¿½ï¿½Øºï¿½
+	 * @param box
+	 * @param sep
+	 * @return
+	 */
+	public static boolean verticalRule3(Box box, SeparatorVo sep) {
+		int x = box.getAbsoluteContentX();
+		int LBY=x + box.getWidth();
+		int sepRLY=sep.getX() + sep.getWidth();
+		if (x < sep.getX() && LBY > sep.getX() && LBY < sepRLY) {
+			return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * ï¿½Ó¾ï¿½ï¿½ï¿½ï¿½Ï²ï¿½ï¿½Í·Ö¸ï¿½ï¿½ï¿½ï¿½Øºï¿½
+	 * @param box
+	 * @param sep
+	 * @return
+	 */
+	public static boolean verticalRule4(Box box, SeparatorVo sep) {
+		int x = box.getAbsoluteContentX();
+		int LBY=x + box.getWidth();
+		int sepLBY=sep.getX() + sep.getWidth();
+		if (x > sep.getX() && x < sepLBY && LBY > sepLBY) {
 			return true;
 		}
 		return false;

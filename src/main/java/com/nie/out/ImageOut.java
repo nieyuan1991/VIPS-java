@@ -16,8 +16,17 @@ import com.nie.vo.SeparatorVo;
 
 public class ImageOut {
 
-	private static final String NAMEPRE=System.getProperty("user.dir");
-	public static void outImg(BufferedImage page) {
+	private final String NAMEPRE=System.getProperty("user.dir");
+	private int width;
+	private int height;
+	
+	public ImageOut(int width, int height) {
+		super();
+		this.width = width;
+		this.height = height;
+	}
+
+	public void outImg(BufferedImage page) {
 		try{
 			String filename =  NAMEPRE + "/page.png";
 			ImageIO.write(page, "png", new File(filename));
@@ -27,7 +36,7 @@ public class ImageOut {
 		}
 	}
 	
-	public static void outBlock(List<BlockVo> block,int width,int height) {
+	public void outBlock(List<BlockVo> block) {
 		System.out.println(width+"::"+height);
 		BufferedImage bi=new BufferedImage(width, height, BufferedImage.TYPE_INT_BGR);
 		Graphics2D g2d=bi.createGraphics();
@@ -40,7 +49,6 @@ public class ImageOut {
 				g2d.fillRect(box.getAbsoluteContentX(), box.getAbsoluteContentY(), box.getAvailableWidth(), box.getContentHeight());
 			}
 		}
-//		g2d.setColor(Color.black);
 		try {
 			ImageIO.write(bi, "png", new File(NAMEPRE + "/block.png"));
 		} catch (IOException e) {
@@ -48,7 +56,7 @@ public class ImageOut {
 		}
 	}
 
-	public static void outSeparator(List<SeparatorVo> list,int width,int height) {
+	public void outSeparator(List<SeparatorVo> list) {
 		BufferedImage bi=new BufferedImage(width, height, BufferedImage.TYPE_INT_BGR);
 		Graphics2D g2d=bi.createGraphics();
 		g2d.setColor(Color.white);
@@ -58,7 +66,7 @@ public class ImageOut {
 			g2d.fillRect(sep.getX(), sep.getY(), sep.getWidth(), sep.getHeight());
 		}
 		try {
-			ImageIO.write(bi, "png", new File(NAMEPRE + "/Separator.png"));
+			ImageIO.write(bi, "png", new File(NAMEPRE + "/Separator"+list.get(0).getType()+".png"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

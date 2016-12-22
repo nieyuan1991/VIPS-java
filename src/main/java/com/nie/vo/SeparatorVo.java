@@ -9,7 +9,7 @@ public class SeparatorVo implements Comparable<SeparatorVo>{
 	private int y=0;
 	private int width=0;
 	private int height=0;
-	private int weight=0;
+	private int weight=5;
 	private int type=0;
 	
 	public SeparatorVo(int x, int y, int width, int height, int type) {

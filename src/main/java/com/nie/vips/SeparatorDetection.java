@@ -101,7 +101,39 @@ public class SeparatorDetection {
 		}
 	}
 	
-	private void verticalRule(Box box) {}
+	private void verticalRule(Box box) {
+		System.out.println(list.size());
+		List<SeparatorVo> temp=new ArrayList<>();
+		temp.addAll(list);
+		for (SeparatorVo sep : temp) {
+			if (horizontalRule1(box, sep)) {
+				int x=box.getAbsoluteContentX()+box.getWidth();
+				SeparatorVo separator=new SeparatorVo(x,0,(sep.getX()+sep.getWidth())-x,height,type);
+				if (separator.getWidth()!=0) {
+					list.add(separator);
+				}
+				
+				SeparatorVo separ=list.get(list.indexOf(sep));
+				separ.setWidth(box.getAbsoluteContentX()-separ.getX());
+				if (separ.getWidth()==0) {
+					list.remove(separ);
+				}
+				
+			}else if (horizontalRule2(box, sep)) {
+				list.remove(sep);
+			}else if (horizontalRule3(box, sep)) {
+				SeparatorVo separator=list.get(list.indexOf(sep));
+				int originalX=separator.getX();
+				separator.setX(box.getAbsoluteContentX()+box.getWidth());
+				separator.setWidth(separator.getWidth()-(separator.getX()-originalX));
+			}else if (horizontalRule4(box, sep)) {
+				SeparatorVo separator=list.get(list.indexOf(sep));
+				separator.setWidth(box.getAbsoluteContentX()-separator.getX());
+			}else {
+				continue;
+			}
+		}
+	}
 	
 	public int getWidth() {
 		return width;

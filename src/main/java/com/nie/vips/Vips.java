@@ -23,25 +23,27 @@ public class Vips {
 	private DOMAnalyzer domAnalyzer = null;
 	private BrowserCanvas browserCanvas = null;
 	private Viewport viewport = null;
-	
+	private ImageOut imgOut=null;
 	
 	public Vips() {
 		setUrl("http://china.huanqiu.com/article/2016-12/9839624.html?from=bdwz");
 		getDomTree(url);
 		getViewport();
-		ImageOut.outImg(browserCanvas.getImage());
+		imgOut=new ImageOut(viewport.getWidth(), viewport.getHeight());
+		imgOut.outImg(browserCanvas.getImage());
 	}
 	
 	public void service() {
 		System.out.println("-----------------------------BlockExtraction------------------------------------");
 		BlockExtraction be=new BlockExtraction(viewport);
 		List<BlockVo> blocks=be.service();
-		ImageOut.outBlock(blocks,viewport.getWidth(),viewport.getHeight());
+		imgOut.outBlock(blocks);
 		System.out.println("-----------------------------SeparatorDetection------------------------------------");
 		SeparatorDetection sd=new SeparatorDetection(viewport.getWidth(), viewport.getHeight());
 		List<SeparatorVo> horizList=sd.service(blocks, SeparatorVo.TYPE_HORIZ);
-		ImageOut.outSeparator(horizList, viewport.getWidth(),viewport.getHeight());
-//		List<SeparatorVo> verticaList=sd.service(block, SeparatorVo.TYPE_VERTICAL);
+		imgOut.outSeparator(horizList);
+//		List<SeparatorVo> verticaList=sd.service(blocks, SeparatorVo.TYPE_VERTICAL);
+//		imgOut.outSeparator(verticaList);
 	}
 	
 	private void setUrl(String urlStr)
