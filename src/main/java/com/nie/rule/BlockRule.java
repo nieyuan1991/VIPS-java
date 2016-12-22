@@ -9,7 +9,7 @@ import org.w3c.dom.Node;
 
 import com.nie.vo.BlockVo;
 
-public class ExtractRule {
+public class BlockRule {
 
 	//TODO threshold value
 	private static int threshold=40000;
@@ -20,7 +20,10 @@ public class ExtractRule {
 			return false;
 		}
 		String name=box.getNode().getNodeName();
-		System.out.println("name::"+name);
+//		System.out.println("name::"+name);
+		if (name.equals("img")) {
+			return false;
+		}
 		if (!box.isBlock())
 		{
 			return inlineRules(block);
@@ -48,7 +51,7 @@ public class ExtractRule {
 	}
 	
 	private static boolean otherRules(BlockVo block) {
-		System.out.println("------------------------------otherRules");
+//		System.out.println("------------------------------otherRules");
 		// 1,2,3,4,6,7,9,10,12
 		if (rule1(block)) {
 			return true;
@@ -81,7 +84,7 @@ public class ExtractRule {
 	}
 
 	private static boolean pRules(BlockVo block) {
-		System.out.println("------------------------------pRules");
+//		System.out.println("------------------------------pRules");
 		// 1,2,3,4,5,6,7,9,10,12
 		if (rule1(block)) {
 			return true;
@@ -117,7 +120,7 @@ public class ExtractRule {
 	}
 
 	private static boolean tdRules(BlockVo block) {
-		System.out.println("------------------------------tdRules");
+//		System.out.println("------------------------------tdRules");
 		// 1,2,3,4,9,10,11,13
 		if (rule1(block)) {
 			return true;
@@ -147,7 +150,7 @@ public class ExtractRule {
 	}
 
 	private static boolean trRules(BlockVo block) {
-		System.out.println("------------------------------trRules");
+//		System.out.println("------------------------------trRules");
 		// 1,2,3,7,8,10,13
 		if (rule1(block)) {
 			return true;
@@ -174,7 +177,7 @@ public class ExtractRule {
 	}
 
 	private static boolean tableRules(BlockVo block) {
-		System.out.println("------------------------------tableRules");
+//		System.out.println("------------------------------tableRules");
 		// 1,2,3,8,10,13
 		if (rule1(block)) {
 			return true;
@@ -199,7 +202,7 @@ public class ExtractRule {
 
 	private static boolean inlineRules(BlockVo block) {
 		// 1,2,3,4,5,6,7,9,10,12
-		System.out.println("------------------------------inlineRules");
+//		System.out.println("------------------------------inlineRules");
 		if (rule1(block)) {
 			return true;
 		}
@@ -242,7 +245,7 @@ public class ExtractRule {
 	private static boolean rule1(BlockVo block) {
 		Box node=block.getBox();
 		if (!isTextNode(node)&&!hasValidChildNode(node)) {
-			return false;
+//			block.getParent().getChildren().remove(block);
 		}
 		return false;
 	}
@@ -423,8 +426,7 @@ public class ExtractRule {
 				String childColor = child.getStylePropertyValue("background-color");
 				if (!bColor.equals(childColor)) {
 					b.setDividable(false);
-					//TODO DoC value
-					b.setDoC(7);
+					b.setDoC(getDocByTagSize("",0));
 					ret = true;
 				} 
 			}
@@ -451,8 +453,7 @@ public class ExtractRule {
 		if (count>0) {
 			if (node.getContentX()*node.getContentY()<threshold) {
 				ret = false;
-				//TODO DoC value
-				block.setDoC(7);
+				block.setDoC(getDocByTagSize("",0));
 			}
 		}
 		return ret;
@@ -473,8 +474,7 @@ public class ExtractRule {
 			maxSize=maxSize<childSize?childSize:maxSize;
 		}
 		if (maxSize<threshold) {
-			//TODO DoC value
-			block.setDoC(7);
+			block.setDoC(getDocByTagSize("",0));
 			return false;
 		}
 		return true;
@@ -516,8 +516,34 @@ public class ExtractRule {
 	 * @return
 	 */
 	private static boolean rule13(BlockVo block) {
-		//TODO DoC value
-		block.setDoC(8);
+		block.setDoC(getDocByTagSize("",0));
+		return false;
+	}
+	
+	/**
+	 * 是否有有效的子节点
+	 * @param node
+	 * @return
+	 */
+	private static boolean hasValidChildNode(Box node) {
+		for (Box box : ((ElementBox) node).getSubBoxList()) {
+			if (isValidNode(box)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * a node that can be seen through the browser. 
+	 * The node’s width and height are not equal to zero.
+	 * @param node
+	 * @return
+	 */
+	private static boolean isValidNode(Box node) {
+		if (node.isDisplayed()&&node.getContentWidth()>0&&node.getContentHeight()>0) {
+			return true;
+		}
 		return false;
 	}
 	
@@ -533,30 +559,25 @@ public class ExtractRule {
 	}
 	
 	/**
-	 * 是否有有效的子节点
+	 * Virtual text node (recursive definition):
+	 * Inline node with only text node children is a virtual text node.
+	 * Inline node with only text node and virtual text node children is a virtual text node.
 	 * @param node
 	 * @return
 	 */
-	private static boolean hasValidChildNode(Box node) {
-		if (!(node instanceof TextBox)) {
-			for (Box box : ((ElementBox)node).getSubBoxList()) {
-				if (isValidNode(box)) {
-					return true;
+	private static boolean isVirtualTextNode(Box node) {
+		if (node instanceof ElementBox) {
+			ElementBox eBox=(ElementBox)node;
+			int size=eBox.getSubBoxList().size();
+			int count=0;
+			for(Box box:eBox.getSubBoxList()){
+				if (isTextNode(box)||isVirtualTextNode(box)) {
+					count++;
 				}
-			} 
-		}
-		return false;
-	}
-	
-	/**
-	 * a node that can be seen through the browser. 
-	 * The node’s width and height are not equal to zero.
-	 * @param node
-	 * @return
-	 */
-	private static boolean isValidNode(Box node) {
-		if (node.isDisplayed()&&node.getContentWidth()>0&&node.getContentHeight()>0) {
-			return true;
+			}
+			if (count==size) {
+				return true;
+			}
 		}
 		return false;
 	}
@@ -584,27 +605,9 @@ public class ExtractRule {
 		
 	}
 	
-	/**
-	 * Virtual text node (recursive definition):
-	 * Inline node with only text node children is a virtual text node.
-	 * Inline node with only text node and virtual text node children is a virtual text node.
-	 * @param node
-	 * @return
-	 */
-	private static boolean isVirtualTextNode(Box node) {
-		if ((node instanceof ElementBox)&&!node.isBlock()) {
-			ElementBox eBox=(ElementBox)node;
-			int size=eBox.getSubBoxList().size();
-			int count=0;
-			for(Box box:eBox.getSubBoxList()){
-				if (isTextNode(box)&&isVirtualTextNode(box)) {
-					count++;
-				}
-			}
-			if (count==size) {
-				return true;
-			}
-		}
-		return false;
+	//TODO
+	private static int getDocByTagSize(String tag,int size) {
+		return 7;
 	}
+	
 }

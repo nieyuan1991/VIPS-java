@@ -9,11 +9,15 @@ public class BlockVo {
 
 	private Box box = null;
 	private BlockVo parent = null;
-	private List<BlockVo> children = new ArrayList<>();
+	private List<BlockVo> children = null;
 	private boolean isVisualBlock = true;
 	private boolean isDividable = true;
 	private int DoC=0;
 	
+	public BlockVo() {
+		super();
+		children = new ArrayList<>();
+	}
 	public Box getBox() {
 		return box;
 	}
