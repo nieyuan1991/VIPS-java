@@ -2,11 +2,13 @@ package com.nie.vo;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import org.fit.cssbox.layout.Box;
 
 public class BlockVo {
 
+	private String id;
 	private Box box = null;
 	private BlockVo parent = null;
 	private List<BlockVo> children = null;
@@ -16,7 +18,14 @@ public class BlockVo {
 	
 	public BlockVo() {
 		super();
+		setId(UUID.randomUUID().toString());
 		children = new ArrayList<>();
+	}
+	public String getId() {
+		return id;
+	}
+	public void setId(String id) {
+		this.id = id;
 	}
 	public Box getBox() {
 		return box;
@@ -53,6 +62,10 @@ public class BlockVo {
 	}
 	public void setDividable(boolean isDividable) {
 		this.isDividable = isDividable;
+	}
+	@Override
+	public String toString() {
+		return "{children:" + children + ", isVisualBlock:" + isVisualBlock + ", DoC:"+DoC+"}";
 	}
 	
 }

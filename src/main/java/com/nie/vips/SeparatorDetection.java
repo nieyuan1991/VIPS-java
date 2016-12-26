@@ -19,12 +19,13 @@ public class SeparatorDetection {
 	public SeparatorDetection(int width, int height) {
 		super();
 		list=new ArrayList<>();
-		setWidth(width);
-		setHeight(height);
+		this.width=width;
+		this.height=height;
 	}
 
 	public List<SeparatorVo> service(List<BlockVo> blocks,int type) {
-		setType(type);
+		this.type=type;
+		list.clear();
 		onsStep();
 		twoStep(blocks);
 		threeStep();
@@ -33,56 +34,78 @@ public class SeparatorDetection {
 		return list;
 	}
 	
+	/**
+	 * Initialize the separator list. The list starts with only one separator (P be , P ee ) whose
+	 * start pixel and end pixel are corresponding to the borders of the pool.
+	 */
 	private void onsStep() {
 		SeparatorVo separator=new SeparatorVo(0,0,width,height,type);
 		list.add(separator);
 	}
 
+	/**
+	 * For every block in the pool, the relation of the block with each separator is evaluated
+	 * a) If the block is contained in the separator, split the separator;
+	 * b) If the block crosses with the separator, update the separator’s parameters;
+	 * c) If the block covers the separator, remove the separator.
+	 * @param blocks
+	 */
 	private void twoStep(List<BlockVo> blocks) {
 		for (BlockVo block:blocks) {
 			if (block.isVisualBlock()&&list.size()>0) {
 				if (type == SeparatorVo.TYPE_HORIZ) {
-					horizontalRule(block.getBox());
+					horizontalDetection(block);
 				} else {
-					verticalRule(block.getBox());
+					verticalDetection(block);
 				}
 			} 
 		}
 	}
 
+	/**
+	 * Remove the four separators that stand at the border of the pool
+	 */
 	private void threeStep() {
 		List<SeparatorVo> temp=new ArrayList<>();
 		temp.addAll(list);
 		if (type==SeparatorVo.TYPE_HORIZ) {
 			for (SeparatorVo sep : temp) {
-				if (sep.getX()==0&&(sep.getY()==0||sep.getY()==height)) {
+				if (sep.getX()==0&&(sep.getY()==0||sep.getY()+sep.getHeight()==height)) {
 					list.remove(sep);
 				}
 			}
 		}else {
 			for (SeparatorVo sep : temp) {
-				if (sep.getY()==0&&(sep.getX()==0||sep.getX()==width)) {
+				if (sep.getY()==0&&(sep.getX()==0||sep.getX()+sep.getWidth()==width)) {
 					list.remove(sep);
 				}
 			}
 		}
 	}
 
-	private void horizontalRule(Box box) {
+	/**
+	 * 检测水平分隔符
+	 * @param box
+	 */
+	private void horizontalDetection(BlockVo block) {
+		Box box=block.getBox();
 		List<SeparatorVo> temp=new ArrayList<>();
 		temp.addAll(list);
 		for (SeparatorVo sep : temp) {
 			if (horizontalRule1(box, sep)) {
 				int y=box.getAbsoluteContentY()+box.getHeight();
-				SeparatorVo separator=new SeparatorVo(0,y,width,(sep.getY()+sep.getHeight())-y,type);
-				if (separator.getHeight()!=0) {
-					list.add(separator);
+				SeparatorVo newSep=new SeparatorVo(0,y,width,(sep.getY()+sep.getHeight())-y,type);
+				if (newSep.getHeight()!=0) {
+					newSep.setOneSide(block);
+					list.add(newSep);
 				}
 				
-				SeparatorVo separ=list.get(list.indexOf(sep));
-				separ.setHeight(box.getAbsoluteContentY()-separ.getY());
-				if (separ.getHeight()==0) {
-					list.remove(separ);
+				SeparatorVo separator=list.get(list.indexOf(sep));
+				separator.setHeight(box.getAbsoluteContentY()-separator.getY());
+				if (separator.getHeight()==0) {
+					list.remove(separator);
+				}else {
+					separator.setOtherSide(block);
 				}
 				
 			}else if (horizontalRule2(box, sep)) {
@@ -91,70 +114,59 @@ public class SeparatorDetection {
 				SeparatorVo separator=list.get(list.indexOf(sep));
 				int originalY=separator.getY();
 				separator.setY(box.getAbsoluteContentY()+box.getHeight());
-				separator.setHeight(separator.getHeight()-(separator.getY()-originalY));
+				separator.setHeight(separator.getHeight()+originalY-separator.getY());
+				separator.setOneSide(block);
 			}else if (horizontalRule4(box, sep)) {
 				SeparatorVo separator=list.get(list.indexOf(sep));
 				separator.setHeight(box.getAbsoluteContentY()-separator.getY());
+				separator.setOtherSide(block);
 			}else {
 				continue;
 			}
 		}
 	}
 	
-	private void verticalRule(Box box) {
-		System.out.println(list.size());
+	/**
+	 * 检测垂直分隔符
+	 * @param box
+	 */
+	private void verticalDetection(BlockVo block) {
+		Box box=block.getBox();
 		List<SeparatorVo> temp=new ArrayList<>();
 		temp.addAll(list);
 		for (SeparatorVo sep : temp) {
-			if (horizontalRule1(box, sep)) {
+			if (verticalRule1(box, sep)) {
 				int x=box.getAbsoluteContentX()+box.getWidth();
-				SeparatorVo separator=new SeparatorVo(x,0,(sep.getX()+sep.getWidth())-x,height,type);
-				if (separator.getWidth()!=0) {
-					list.add(separator);
+				SeparatorVo newSep=new SeparatorVo(x,0,(sep.getX()+sep.getWidth())-x,height,type);
+				if (newSep.getWidth()!=0) {
+					newSep.setOneSide(block);
+					list.add(newSep);
 				}
 				
-				SeparatorVo separ=list.get(list.indexOf(sep));
-				separ.setWidth(box.getAbsoluteContentX()-separ.getX());
-				if (separ.getWidth()==0) {
-					list.remove(separ);
+				SeparatorVo separator=list.get(list.indexOf(sep));
+				separator.setWidth(box.getAbsoluteContentX()-separator.getX());
+				if (separator.getWidth()==0) {
+					list.remove(separator);
+				}else {
+					separator.setOtherSide(block);
 				}
 				
-			}else if (horizontalRule2(box, sep)) {
+			}else if (verticalRule2(box, sep)) {
 				list.remove(sep);
-			}else if (horizontalRule3(box, sep)) {
+			}else if (verticalRule3(box, sep)) {
 				SeparatorVo separator=list.get(list.indexOf(sep));
 				int originalX=separator.getX();
 				separator.setX(box.getAbsoluteContentX()+box.getWidth());
-				separator.setWidth(separator.getWidth()-(separator.getX()-originalX));
-			}else if (horizontalRule4(box, sep)) {
+				separator.setWidth(originalX+separator.getWidth()-separator.getX());
+				separator.setOneSide(block);
+			}else if (verticalRule4(box, sep)) {
 				SeparatorVo separator=list.get(list.indexOf(sep));
 				separator.setWidth(box.getAbsoluteContentX()-separator.getX());
+				separator.setOtherSide(block);
 			}else {
 				continue;
 			}
 		}
-	}
-	
-	public int getWidth() {
-		return width;
-	}
-
-	public void setWidth(int width) {
-		this.width = width;
-	}
-	public int getHeight() {
-		return height;
-	}
-	public void setHeight(int height) {
-		this.height = height;
-	}
-
-	public int getType() {
-		return type;
-	}
-
-	public void setType(int type) {
-		this.type = type;
 	}
 	
 }

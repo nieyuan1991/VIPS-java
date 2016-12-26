@@ -1,5 +1,11 @@
 package com.nie.rule;
 
+import java.util.List;
+
+import org.fit.cssbox.layout.Box;
+import org.fit.cssbox.layout.ElementBox;
+
+import com.nie.vo.BlockVo;
 import com.nie.vo.SeparatorVo;
 
 public class WeightRule {
@@ -11,17 +17,12 @@ public class WeightRule {
 	 * @param sep
 	 * @return
 	 */
-	public static boolean rule1(SeparatorVo sep) {
+	public static void rule1(SeparatorVo sep) {
 		if (sep.getType()==SeparatorVo.TYPE_HORIZ) {
-			if (sep.getHeight()>distance) {
-				return true;
-			}
+			sep.setWeight(sep.getWeight()+sep.getHeight()/distance);
 		}else if (sep.getType()==SeparatorVo.TYPE_VERTICAL) {
-			if (sep.getWidth()>distance) {
-				return true;
-			}
+			sep.setWeight(sep.getWeight()+sep.getWeight()/distance);
 		}
-		return false;
 	}
 	
 	/**
@@ -30,8 +31,18 @@ public class WeightRule {
 	 * @param sep
 	 * @return
 	 */
-	public static boolean rule2(SeparatorVo sep) {
-		return false;
+	public static void rule2(SeparatorVo sep,List<BlockVo> hrList) {
+		for (BlockVo block : hrList) {
+			Box box=block.getBox();
+			int RBX=sep.getX()+sep.getWidth();
+			int RBY=sep.getY()+sep.getHeight();
+			int HRRBX=box.getAbsoluteContentX()+box.getWidth();
+			int HRRBY=box.getAbsoluteContentY()+box.getHeight();
+			if (sep.getX()<=box.getAbsoluteContentX()&&sep.getY()<=box.getAbsoluteContentY()
+					&&RBX>HRRBX&&RBY>HRRBY) {
+				sep.setWeight(sep.getWeight()+1);
+			}
+		}
 	}
 	
 	/**
@@ -40,22 +51,46 @@ public class WeightRule {
 	 * @param sep
 	 * @return
 	 */
-	public static boolean rule3(SeparatorVo sep) {
-		return false;
+	public static void rule3(SeparatorVo sep) {
+		Box oneBox=sep.getOneSide().getBox();
+		Box otherBox=sep.getOtherSide().getBox();
+		if (oneBox instanceof ElementBox&&otherBox instanceof ElementBox) {
+			String oneColor = ((ElementBox) oneBox).getStylePropertyValue("background-color");
+			String otherColor = ((ElementBox) otherBox).getStylePropertyValue("background-color");
+			if (!oneColor.equals(otherColor)) {
+				sep.setWeight(sep.getWeight() + 1);
+			} 
+		}
 	}
 	
 	/**
 	 * For horizontal separators, 
 	 * if the differences of font properties such as font size and font weight 
-	 * are bigger on two sides of the separator, 
-	 * the weight will be increased. Moreover, 
-	 * the weight will be increased if the font size of the block above the 
+	 * are bigger on two sides of the separator,the weight will be increased. 
+	 * Moreover,the weight will be increased if the font size of the block above the 
 	 * separator is smaller than the font size of the block below the separator.
 	 * @param sep
 	 * @return
 	 */
-	public static boolean rule4(SeparatorVo sep) {
-		return false;
+	public static void rule4(SeparatorVo sep) {
+		if (sep.getType()==SeparatorVo.TYPE_HORIZ) {
+			Box oneBox=sep.getOneSide().getBox();
+			int oneSize=oneBox.getVisualContext().getFont().getSize();
+			Box otherBox=sep.getOtherSide().getBox();
+			int otherSize=otherBox.getVisualContext().getFont().getSize();
+			if (oneSize<otherSize) {
+				sep.setWeight(sep.getWeight()+1);
+			}
+			
+			if (oneBox instanceof ElementBox&&otherBox instanceof ElementBox) {
+				String oneWeight = ((ElementBox) oneBox).getStylePropertyValue("font-weight");
+				String otherWeight = ((ElementBox) otherBox).getStylePropertyValue("font-weight");
+				if (oneSize != otherSize && !oneWeight.equals(otherWeight)) {
+					sep.setWeight(sep.getWeight() + 1);
+				} 
+			}
+			
+		}
 	}
 	
 	/**
@@ -65,7 +100,15 @@ public class WeightRule {
 	 * @param sep
 	 * @return
 	 */
-	public static boolean rule5(SeparatorVo sep) {
-		return false;
+	public static void rule5(SeparatorVo sep) {
+		if (sep.getType()==SeparatorVo.TYPE_HORIZ) {
+			Box oneBox=sep.getOneSide().getBox();
+			String oneName=oneBox.getNode().getNodeName();
+			Box otherBox=sep.getOtherSide().getBox();
+			String otherName=otherBox.getNode().getNodeName();
+			if (oneName.equals(otherName)) {
+				sep.setWeight(sep.getWeight()-1);
+			}
+		}
 	}
 }

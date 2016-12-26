@@ -11,6 +11,8 @@ public class SeparatorVo implements Comparable<SeparatorVo>{
 	private int height=0;
 	private int weight=5;
 	private int type=0;
+	private BlockVo oneSide;		//上边or左边
+	private BlockVo otherSide;		//下边or右边
 	
 	public SeparatorVo(int x, int y, int width, int height, int type) {
 		super();
@@ -61,6 +63,23 @@ public class SeparatorVo implements Comparable<SeparatorVo>{
 	public void setType(int type) {
 		this.type = type;
 	}
+	
+	public BlockVo getOneSide() {
+		return oneSide;
+	}
+
+	public void setOneSide(BlockVo oneSide) {
+		this.oneSide = oneSide;
+	}
+
+	public BlockVo getOtherSide() {
+		return otherSide;
+	}
+
+	public void setOtherSide(BlockVo otherSide) {
+		this.otherSide = otherSide;
+	}
+
 	@Override
 	public int compareTo(SeparatorVo o) {
 		return getWeight()-o.getWeight();

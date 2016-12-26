@@ -1,6 +1,8 @@
 package com.nie.vips;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.fit.cssbox.css.CSSNorm;
@@ -19,6 +21,7 @@ import com.nie.vo.SeparatorVo;
 
 public class Vips {
 	
+//	private int PDoC=8;
 	private URL url = null;
 	private DOMAnalyzer domAnalyzer = null;
 	private BrowserCanvas browserCanvas = null;
@@ -34,16 +37,40 @@ public class Vips {
 	}
 	
 	public void service() {
-		System.out.println("-----------------------------BlockExtraction------------------------------------");
+		System.out.println("-----------------------------Block Extraction------------------------------------");
 		BlockExtraction be=new BlockExtraction(viewport);
-		List<BlockVo> blocks=be.service();
-		imgOut.outBlock(blocks);
-		System.out.println("-----------------------------SeparatorDetection------------------------------------");
+		BlockVo block=be.service();
+		List<BlockVo> blocks=be.getList();
+		imgOut.outBlock(blocks,"Block1");
+		System.out.println("-----------------------------Separator Detection---------------------------------");
 		SeparatorDetection sd=new SeparatorDetection(viewport.getWidth(), viewport.getHeight());
-		List<SeparatorVo> horizList=sd.service(blocks, SeparatorVo.TYPE_HORIZ);
-		imgOut.outSeparator(horizList);
-//		List<SeparatorVo> verticaList=sd.service(blocks, SeparatorVo.TYPE_VERTICAL);
-//		imgOut.outSeparator(verticaList);
+		List<SeparatorVo> horizList=new ArrayList<>();
+		horizList.addAll(sd.service(blocks, SeparatorVo.TYPE_HORIZ));
+		imgOut.outSeparator(horizList,"horizontal");
+		List<SeparatorVo> verticaList=new ArrayList<>();
+		verticaList.addAll(sd.service(blocks, SeparatorVo.TYPE_VERTICAL));
+		imgOut.outSeparator(verticaList,"vertica");
+		System.out.println("-----------------------Setting Weights for Separators----------------------------");
+		List<BlockVo> hrList=be.getHrList();
+		SeparatorWeight sw=new SeparatorWeight();
+		sw.service(horizList, hrList);
+		sw.service(verticaList, hrList);
+		System.out.println("-----------------------Content Structure Construction----------------------------");
+		List<SeparatorVo> sepList=new ArrayList<>();
+		sepList.addAll(horizList);
+		sepList.addAll(verticaList);
+		Collections.sort(sepList);
+		
+		ContentStructureConstruction csc=new ContentStructureConstruction();
+		csc.service(sepList, block);
+		System.out.println(block);
+		
+		be.getList().clear();
+		be.filList(block);
+		blocks=be.getList();
+		System.out.println("countVisualBlock::"+blocks.size());
+		imgOut.outBlock(blocks,"Block2");
+		imgOut.outSeparator(sepList, "separator");
 	}
 	
 	private void setUrl(String urlStr)

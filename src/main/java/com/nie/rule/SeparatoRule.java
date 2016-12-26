@@ -7,7 +7,7 @@ import com.nie.vo.SeparatorVo;
 public class SeparatoRule {
 
 	/**
-	 * �Ӿ�����ȫ�ڷָ����ڵ�
+	 * 水平分隔符:box在分隔符内
 	 * @param box
 	 * @param sep
 	 * @return
@@ -21,7 +21,7 @@ public class SeparatoRule {
 	}
 	
 	/**
-	 * �Ӿ������򴩹��ָ���
+	 * 水平分隔符: box穿过分隔符
 	 * @param box
 	 * @param sep
 	 * @return
@@ -35,7 +35,7 @@ public class SeparatoRule {
 	}
 	
 	/**
-	 * �Ӿ����²��ͷָ����غ�
+	 * 水平分隔符 :box下部分与分隔符重合
 	 * @param box
 	 * @param sep
 	 * @return
@@ -51,7 +51,7 @@ public class SeparatoRule {
 	}
 	
 	/**
-	 * �Ӿ����ϲ��ͷָ����غ�
+	 * 水平分隔符: box上部分与分隔符重合
 	 * @param box
 	 * @param sep
 	 * @return
@@ -67,7 +67,7 @@ public class SeparatoRule {
 	}
 	
 	/**
-	 * �Ӿ�����ȫ�ڷָ����ڵ�
+	 * 垂直分隔符: box在分隔符内
 	 * @param box
 	 * @param sep
 	 * @return
@@ -81,7 +81,7 @@ public class SeparatoRule {
 	}
 	
 	/**
-	 * �Ӿ������򴩹��ָ���
+	 * 垂直分隔符: box横穿分隔符
 	 * @param box
 	 * @param sep
 	 * @return
@@ -95,32 +95,32 @@ public class SeparatoRule {
 	}
 	
 	/**
-	 * �Ӿ����²��ͷָ����غ�
+	 * 垂直分隔符: box右边与分隔符重叠
 	 * @param box
 	 * @param sep
 	 * @return
 	 */
 	public static boolean verticalRule3(Box box, SeparatorVo sep) {
 		int x = box.getAbsoluteContentX();
-		int LBY=x + box.getWidth();
-		int sepRLY=sep.getX() + sep.getWidth();
-		if (x < sep.getX() && LBY > sep.getX() && LBY < sepRLY) {
+		int rightX=x + box.getWidth();
+		int sepRightX=sep.getX() + sep.getWidth();
+		if (x < sep.getX() && rightX > sep.getX() && rightX < sepRightX) {
 			return true;
 		}
 		return false;
 	}
 	
 	/**
-	 * �Ӿ����ϲ��ͷָ����غ�
+	 * 垂直分隔符: box左边与分隔符重叠
 	 * @param box
 	 * @param sep
 	 * @return
 	 */
 	public static boolean verticalRule4(Box box, SeparatorVo sep) {
 		int x = box.getAbsoluteContentX();
-		int LBY=x + box.getWidth();
-		int sepLBY=sep.getX() + sep.getWidth();
-		if (x > sep.getX() && x < sepLBY && LBY > sepLBY) {
+		int rightX=x + box.getWidth();
+		int sepRightX=sep.getX() + sep.getWidth();
+		if (x > sep.getX() && x < sepRightX && rightX > sepRightX) {
 			return true;
 		}
 		return false;

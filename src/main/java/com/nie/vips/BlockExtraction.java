@@ -15,26 +15,32 @@ public class BlockExtraction {
 
 	private Viewport viewport = null;
 	private List<BlockVo> list=null;
+	private List<BlockVo> hrList=null;
+	BlockVo block=null;
 //	private int round=0;
 	
 	public BlockExtraction(Viewport viewport) {
 		super();
 		this.viewport = viewport;
 		list=new ArrayList<>();
+		hrList=new ArrayList<>();
+		block=new BlockVo();
 	}
 
-	public List<BlockVo> service() {
+	public BlockVo service() {
 		Box body=viewport.getElementBoxByName("body", false);
-		BlockVo block=new BlockVo();
 		fillBlock(body, block);
 		dividBlock(block);
-		countVisualBlock(block);
+		filList(block);
 		System.out.println("countVisualBlock::"+list.size());
-		return list;
+		return block;
 	}
 	
 	private void fillBlock(Box box,BlockVo block) {
 		block.setBox(box);
+		if (box.getNode().getNodeName().equals("hr")) {
+			hrList.add(block);
+		}
 		if (! (box instanceof TextBox)) {
 			for (Box b : ((ElementBox) box).getSubBoxList()) {
 				block.getChildren().add(new BlockVo());
@@ -55,14 +61,22 @@ public class BlockExtraction {
 		}
 	}
 	
-	private void countVisualBlock(BlockVo block) {
+	public void filList(BlockVo block) {
 		if (block.isVisualBlock()) {
 			list.add(block);
-		}
-		for (BlockVo blockVo : block.getChildren()) {
-			countVisualBlock(blockVo);
+		}else {
+			for (BlockVo blockVo : block.getChildren()) {
+				filList(blockVo);
+			}
 		}
 	}
-	
+
+	public List<BlockVo> getList() {
+		return list;
+	}
+
+	public List<BlockVo> getHrList() {
+		return hrList;
+	}
 	
 }
