@@ -9,8 +9,6 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 
-import org.fit.cssbox.layout.Box;
-
 import com.nie.vo.BlockVo;
 import com.nie.vo.SeparatorVo;
 
@@ -19,6 +17,7 @@ public class ImageOut {
 	private final String NAMEPRE=System.getProperty("user.dir")+"/";
 	private int width;
 	private int height;
+	BufferedImage bi=null;
 	
 	public ImageOut(int width, int height) {
 		super();
@@ -27,6 +26,7 @@ public class ImageOut {
 	}
 
 	public void outImg(BufferedImage page) {
+		this.bi=page;
 		try{
 			String filename =  NAMEPRE + "page.png";
 			ImageIO.write(page, "png", new File(filename));
@@ -44,8 +44,8 @@ public class ImageOut {
 		g2d.setColor(Color.black);
 		for (BlockVo blockVo : block) {
 			if (blockVo.isVisualBlock()) {
-				Box box = blockVo.getBox();
-				g2d.fillRect(box.getAbsoluteContentX(), box.getAbsoluteContentY(), box.getAvailableWidth(), box.getContentHeight());
+				g2d.fillRect(blockVo.getX(),blockVo.getY(),blockVo.getWidth(),blockVo.getHeight());
+//				g2d.drawRoundRect(box.getAbsoluteContentX(), box.getAbsoluteContentY(), box.getAvailableWidth(), box.getContentHeight(), 1, 1);
 			}
 		}
 		try {

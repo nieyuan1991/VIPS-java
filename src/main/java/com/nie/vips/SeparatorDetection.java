@@ -3,8 +3,6 @@ package com.nie.vips;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.fit.cssbox.layout.Box;
-
 import static com.nie.rule.SeparatoRule.*;
 import com.nie.vo.BlockVo;
 import com.nie.vo.SeparatorVo;
@@ -30,7 +28,7 @@ public class SeparatorDetection {
 		twoStep(blocks);
 		threeStep();
 		System.out.println("SeparatorVo.list.size::"+list.size());
-		System.out.println(list);
+//		System.out.println(list);
 		return list;
 	}
 	
@@ -85,15 +83,14 @@ public class SeparatorDetection {
 
 	/**
 	 * 检测水平分隔符
-	 * @param box
+	 * @param block
 	 */
 	private void horizontalDetection(BlockVo block) {
-		Box box=block.getBox();
 		List<SeparatorVo> temp=new ArrayList<>();
 		temp.addAll(list);
 		for (SeparatorVo sep : temp) {
-			if (horizontalRule1(box, sep)) {
-				int y=box.getAbsoluteContentY()+box.getHeight();
+			if (horizontalRule1(block, sep)) {
+				int y=block.getY()+block.getHeight();
 				SeparatorVo newSep=new SeparatorVo(0,y,width,(sep.getY()+sep.getHeight())-y,type);
 				if (newSep.getHeight()!=0) {
 					newSep.setOneSide(block);
@@ -101,24 +98,24 @@ public class SeparatorDetection {
 				}
 				
 				SeparatorVo separator=list.get(list.indexOf(sep));
-				separator.setHeight(box.getAbsoluteContentY()-separator.getY());
+				separator.setHeight(block.getY()-separator.getY());
 				if (separator.getHeight()==0) {
 					list.remove(separator);
 				}else {
 					separator.setOtherSide(block);
 				}
 				
-			}else if (horizontalRule2(box, sep)) {
+			}else if (horizontalRule2(block, sep)) {
 				list.remove(sep);
-			}else if (horizontalRule3(box, sep)) {
+			}else if (horizontalRule3(block, sep)) {
 				SeparatorVo separator=list.get(list.indexOf(sep));
 				int originalY=separator.getY();
-				separator.setY(box.getAbsoluteContentY()+box.getHeight());
+				separator.setY(block.getY()+block.getHeight());
 				separator.setHeight(separator.getHeight()+originalY-separator.getY());
 				separator.setOneSide(block);
-			}else if (horizontalRule4(box, sep)) {
+			}else if (horizontalRule4(block, sep)) {
 				SeparatorVo separator=list.get(list.indexOf(sep));
-				separator.setHeight(box.getAbsoluteContentY()-separator.getY());
+				separator.setHeight(block.getY()-separator.getY());
 				separator.setOtherSide(block);
 			}else {
 				continue;
@@ -128,15 +125,14 @@ public class SeparatorDetection {
 	
 	/**
 	 * 检测垂直分隔符
-	 * @param box
+	 * @param block
 	 */
 	private void verticalDetection(BlockVo block) {
-		Box box=block.getBox();
 		List<SeparatorVo> temp=new ArrayList<>();
 		temp.addAll(list);
 		for (SeparatorVo sep : temp) {
-			if (verticalRule1(box, sep)) {
-				int x=box.getAbsoluteContentX()+box.getWidth();
+			if (verticalRule1(block, sep)) {
+				int x=block.getX()+block.getWidth();
 				SeparatorVo newSep=new SeparatorVo(x,0,(sep.getX()+sep.getWidth())-x,height,type);
 				if (newSep.getWidth()!=0) {
 					newSep.setOneSide(block);
@@ -144,24 +140,24 @@ public class SeparatorDetection {
 				}
 				
 				SeparatorVo separator=list.get(list.indexOf(sep));
-				separator.setWidth(box.getAbsoluteContentX()-separator.getX());
+				separator.setWidth(block.getX()-separator.getX());
 				if (separator.getWidth()==0) {
 					list.remove(separator);
 				}else {
 					separator.setOtherSide(block);
 				}
 				
-			}else if (verticalRule2(box, sep)) {
+			}else if (verticalRule2(block, sep)) {
 				list.remove(sep);
-			}else if (verticalRule3(box, sep)) {
+			}else if (verticalRule3(block, sep)) {
 				SeparatorVo separator=list.get(list.indexOf(sep));
 				int originalX=separator.getX();
-				separator.setX(box.getAbsoluteContentX()+box.getWidth());
+				separator.setX(block.getX()+block.getWidth());
 				separator.setWidth(originalX+separator.getWidth()-separator.getX());
 				separator.setOneSide(block);
-			}else if (verticalRule4(box, sep)) {
+			}else if (verticalRule4(block, sep)) {
 				SeparatorVo separator=list.get(list.indexOf(sep));
-				separator.setWidth(box.getAbsoluteContentX()-separator.getX());
+				separator.setWidth(block.getX()-separator.getX());
 				separator.setOtherSide(block);
 			}else {
 				continue;

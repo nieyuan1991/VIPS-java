@@ -9,7 +9,11 @@ import org.fit.cssbox.layout.Box;
 public class BlockVo {
 
 	private String id;
-	private Box box = null;
+	private int x;
+	private int y;
+	private int width;
+	private int height;
+	private List<Box> boxs = null;
 	private BlockVo parent = null;
 	private List<BlockVo> children = null;
 	private boolean isVisualBlock = true;
@@ -19,19 +23,65 @@ public class BlockVo {
 	public BlockVo() {
 		super();
 		setId(UUID.randomUUID().toString());
+		boxs=new ArrayList<>();
 		children = new ArrayList<>();
 	}
+	
+	public void refresh() {
+		for (int i=0;i<boxs.size();i++) {
+			Box box =boxs.get(i);
+			if (i==0) {
+				x=box.getAbsoluteContentX();
+				y=box.getAbsoluteContentY();
+				width=box.getAvailableWidth();
+				height=box.getContentHeight();
+			}else {
+				int RBX=x+width;
+				int RBY=y+height;
+				int boxRBX=box.getAbsoluteContentX()+box.getAvailableWidth();
+				int boxRBY=box.getAbsoluteContentY()+box.getContentHeight();
+				RBX=boxRBX>RBX?boxRBX:RBX;
+				RBY=boxRBY>RBY?boxRBY:RBY;
+				x=box.getAbsoluteContentX()<x?box.getAbsoluteContentX():x;
+				y=box.getAbsoluteContentY()<y?box.getAbsoluteContentY():y;
+				width=RBX-x;
+				height=RBY-y;
+			}
+		}
+	}
+	
 	public String getId() {
 		return id;
 	}
 	public void setId(String id) {
 		this.id = id;
 	}
-	public Box getBox() {
-		return box;
+	public int getX() {
+		return x;
 	}
-	public void setBox(Box box) {
-		this.box = box;
+	public void setX(int x) {
+		this.x = x;
+	}
+	public int getY() {
+		return y;
+	}
+	public void setY(int y) {
+		this.y = y;
+	}
+	public int getWidth() {
+		return width;
+	}
+	public void setWidth(int width) {
+		this.width = width;
+	}
+	public int getHeight() {
+		return height;
+	}
+	public void setHeight(int height) {
+		this.height = height;
+	}
+	public List<Box> getBoxs() {
+		return boxs;
 	}
 	public BlockVo getParent() {
 		return parent;
@@ -41,9 +91,6 @@ public class BlockVo {
 	}
 	public List<BlockVo> getChildren() {
 		return children;
-	}
-	public void setChildren(List<BlockVo> children) {
-		this.children = children;
 	}
 	public boolean isVisualBlock() {
 		return isVisualBlock;
@@ -65,7 +112,6 @@ public class BlockVo {
 	}
 	@Override
 	public String toString() {
-		return "{children:" + children + ", isVisualBlock:" + isVisualBlock + ", DoC:"+DoC+"}";
+		return "{is:" + isVisualBlock +",ch:" + children +  "}";
 	}
-	
 }

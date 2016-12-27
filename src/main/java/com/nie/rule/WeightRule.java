@@ -33,7 +33,7 @@ public class WeightRule {
 	 */
 	public static void rule2(SeparatorVo sep,List<BlockVo> hrList) {
 		for (BlockVo block : hrList) {
-			Box box=block.getBox();
+			Box box=block.getBoxs().get(0);
 			int RBX=sep.getX()+sep.getWidth();
 			int RBY=sep.getY()+sep.getHeight();
 			int HRRBX=box.getAbsoluteContentX()+box.getWidth();
@@ -52,8 +52,8 @@ public class WeightRule {
 	 * @return
 	 */
 	public static void rule3(SeparatorVo sep) {
-		Box oneBox=sep.getOneSide().getBox();
-		Box otherBox=sep.getOtherSide().getBox();
+		Box oneBox=sep.getOneSide().getBoxs().get(0);
+		Box otherBox=sep.getOtherSide().getBoxs().get(0);
 		if (oneBox instanceof ElementBox&&otherBox instanceof ElementBox) {
 			String oneColor = ((ElementBox) oneBox).getStylePropertyValue("background-color");
 			String otherColor = ((ElementBox) otherBox).getStylePropertyValue("background-color");
@@ -74,9 +74,9 @@ public class WeightRule {
 	 */
 	public static void rule4(SeparatorVo sep) {
 		if (sep.getType()==SeparatorVo.TYPE_HORIZ) {
-			Box oneBox=sep.getOneSide().getBox();
+			Box oneBox=sep.getOneSide().getBoxs().get(0);
 			int oneSize=oneBox.getVisualContext().getFont().getSize();
-			Box otherBox=sep.getOtherSide().getBox();
+			Box otherBox=sep.getOtherSide().getBoxs().get(0);
 			int otherSize=otherBox.getVisualContext().getFont().getSize();
 			if (oneSize<otherSize) {
 				sep.setWeight(sep.getWeight()+1);
@@ -102,9 +102,9 @@ public class WeightRule {
 	 */
 	public static void rule5(SeparatorVo sep) {
 		if (sep.getType()==SeparatorVo.TYPE_HORIZ) {
-			Box oneBox=sep.getOneSide().getBox();
+			Box oneBox=sep.getOneSide().getBoxs().get(0);
 			String oneName=oneBox.getNode().getNodeName();
-			Box otherBox=sep.getOtherSide().getBox();
+			Box otherBox=sep.getOtherSide().getBoxs().get(0);
 			String otherName=otherBox.getNode().getNodeName();
 			if (oneName.equals(otherName)) {
 				sep.setWeight(sep.getWeight()-1);

@@ -19,36 +19,50 @@ public class ContentStructureConstruction {
 	}
 
 	public void service(List<SeparatorVo> sepList,BlockVo block){
-		List<SeparatorVo> temp=new ArrayList<>();
-		temp.addAll(sepList);
-		int maxWeight=temp.get(temp.size()-1).getWeight();
-		System.out.println("maxWeight::"+maxWeight);
-		for (SeparatorVo sep : temp) {
-			if (maxWeight==sep.getWeight()) {
-				break;
+		if (sepList.size()>0) {
+			List<SeparatorVo> temp = new ArrayList<>();
+			temp.addAll(sepList);
+			int maxWeight = temp.get(temp.size() - 1).getWeight();
+			System.out.println("maxWeight::" + maxWeight);
+			for (SeparatorVo sep : temp) {
+				if (maxWeight == sep.getWeight()) {
+					break;
+				}
+				if (sep.getOneSide() != null && sep.getOtherSide() != null) {
+					String oneId=sep.getOneSide().getId();
+					String otherId=sep.getOtherSide().getId();
+					loopBlock(block, oneId, otherId);
+				}
+				sepList.remove(sep);
 			}
-			if (sep.getOneSide()!=null&&sep.getOtherSide()!=null) {
-				idSet.add(sep.getOneSide().getId());
-				idSet.add(sep.getOtherSide().getId());
-			}
-			sepList.remove(sep);
 		}
-		changeBlockById(block);
+	}
+
+	private void loopBlock(BlockVo block, String oneId, String otherId) {
+		if (!mergeBlock(block.getChildren(), oneId, otherId)) {
+			for (BlockVo childBlock : block.getChildren()) {
+				loopBlock(childBlock, oneId, otherId);
+			}
+		}
 	}
 	
-	private void changeBlockById(BlockVo block) {
-		Set<String> temp=new HashSet<>();
-		temp.addAll(idSet);
-		for (String id : temp) {
-			if (block.getId().equals(id)&&block.getParent()!=null) {
-				block.getParent().setVisualBlock(true);
-				block.setVisualBlock(false);
-				idSet.remove(id);
-				break;
+	private boolean mergeBlock(List<BlockVo> blocks,String oneId,String otherId) {
+		for (BlockVo block : blocks) {
+			if (block.getId().equals(oneId)) {
+				List<BlockVo> childTemp = new ArrayList<>();
+				childTemp.addAll(block.getParent().getChildren());
+				for (BlockVo bVo : childTemp) {
+					if (bVo.getId().equals(otherId)) {
+						block.getBoxs().addAll(bVo.getBoxs());
+						block.getChildren().addAll(bVo.getChildren());
+						block.getParent().getChildren().remove(bVo);
+						return true;
+					}
+				} 
+				return false;
 			}
 		}
-		for (BlockVo bVo : block.getChildren()) {
-			changeBlockById(bVo);
-		}
+		return false;
 	}
+	
 }

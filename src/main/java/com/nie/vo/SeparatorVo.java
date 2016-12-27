@@ -9,7 +9,7 @@ public class SeparatorVo implements Comparable<SeparatorVo>{
 	private int y=0;
 	private int width=0;
 	private int height=0;
-	private int weight=5;
+	private int weight=7;
 	private int type=0;
 	private BlockVo oneSide;		//上边or左边
 	private BlockVo otherSide;		//下边or右边

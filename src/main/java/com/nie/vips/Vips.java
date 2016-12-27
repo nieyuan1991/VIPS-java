@@ -21,7 +21,7 @@ import com.nie.vo.SeparatorVo;
 
 public class Vips {
 	
-//	private int PDoC=8;
+	private int PDoC=8;
 	private URL url = null;
 	private DOMAnalyzer domAnalyzer = null;
 	private BrowserCanvas browserCanvas = null;
@@ -29,7 +29,7 @@ public class Vips {
 	private ImageOut imgOut=null;
 	
 	public Vips() {
-		setUrl("http://china.huanqiu.com/article/2016-12/9839624.html?from=bdwz");
+		setUrl("http://china.huanqiu.com/article/2016-12/9867032.html?from=bdwz");
 		getDomTree(url);
 		getViewport();
 		imgOut=new ImageOut(viewport.getWidth(), viewport.getHeight());
@@ -40,37 +40,46 @@ public class Vips {
 		System.out.println("-----------------------------Block Extraction------------------------------------");
 		BlockExtraction be=new BlockExtraction(viewport);
 		BlockVo block=be.service();
-		List<BlockVo> blocks=be.getList();
-		imgOut.outBlock(blocks,"Block1");
-		System.out.println("-----------------------------Separator Detection---------------------------------");
-		SeparatorDetection sd=new SeparatorDetection(viewport.getWidth(), viewport.getHeight());
-		List<SeparatorVo> horizList=new ArrayList<>();
-		horizList.addAll(sd.service(blocks, SeparatorVo.TYPE_HORIZ));
-		imgOut.outSeparator(horizList,"horizontal");
-		List<SeparatorVo> verticaList=new ArrayList<>();
-		verticaList.addAll(sd.service(blocks, SeparatorVo.TYPE_VERTICAL));
-		imgOut.outSeparator(verticaList,"vertica");
-		System.out.println("-----------------------Setting Weights for Separators----------------------------");
-		List<BlockVo> hrList=be.getHrList();
-		SeparatorWeight sw=new SeparatorWeight();
-		sw.service(horizList, hrList);
-		sw.service(verticaList, hrList);
-		System.out.println("-----------------------Content Structure Construction----------------------------");
-		List<SeparatorVo> sepList=new ArrayList<>();
-		sepList.addAll(horizList);
-		sepList.addAll(verticaList);
-		Collections.sort(sepList);
+		List<BlockVo> blockList = be.getList();
+		int i=0;
+		while (checkDoC(blockList)&&i<5) {
+			imgOut.outBlock(blockList, "Block"+i);
+			System.out.println("-----------------------------Separator Detection---------------------------------"+i);
+			SeparatorDetection sd = new SeparatorDetection(viewport.getWidth(), viewport.getHeight());
+			List<SeparatorVo> horizList = new ArrayList<>();
+			horizList.addAll(sd.service(blockList, SeparatorVo.TYPE_HORIZ));
+			imgOut.outSeparator(horizList, "horizontal"+i);
+			List<SeparatorVo> verticaList = new ArrayList<>();
+			verticaList.addAll(sd.service(blockList, SeparatorVo.TYPE_VERTICAL));
+			imgOut.outSeparator(verticaList, "vertica"+i);
+			System.out.println("-----------------------Setting Weights for Separators----------------------------"+i);
+			List<BlockVo> hrList = be.getHrList();
+			SeparatorWeight sw = new SeparatorWeight();
+			sw.service(horizList, hrList);
+			sw.service(verticaList, hrList);
+			System.out.println("-----------------------Content Structure Construction----------------------------"+i);
+			List<SeparatorVo> sepList = new ArrayList<>();
+			sepList.addAll(horizList);
+			sepList.addAll(verticaList);
+			Collections.sort(sepList);
+			ContentStructureConstruction csc = new ContentStructureConstruction();
+			csc.service(sepList, block);
+			be.refreshBlock(block);
+			blockList.clear();
+			be.filList(block);
+			blockList=be.getList();
+			i++;
+		}
 		
-		ContentStructureConstruction csc=new ContentStructureConstruction();
-		csc.service(sepList, block);
-		System.out.println(block);
-		
-		be.getList().clear();
-		be.filList(block);
-		blocks=be.getList();
-		System.out.println("countVisualBlock::"+blocks.size());
-		imgOut.outBlock(blocks,"Block2");
-		imgOut.outSeparator(sepList, "separator");
+	}
+
+	private boolean checkDoC(List<BlockVo> blocks) {
+		for (BlockVo blockVo : blocks) {
+			if (blockVo.getDoC()<PDoC) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	private void setUrl(String urlStr)

@@ -15,7 +15,7 @@ public class BlockRule {
 	private static int threshold=40000;
 	
 	public static boolean dividable(BlockVo block) {
-		Box box=block.getBox();
+		Box box=block.getBoxs().get(0);
 		if (box instanceof TextBox) {
 			return false;
 		}
@@ -243,7 +243,7 @@ public class BlockRule {
 	 * @return
 	 */
 	private static boolean rule1(BlockVo block) {
-		Box node=block.getBox();
+		Box node=block.getBoxs().get(0);
 		if (!isTextNode(node)&&!hasValidChildNode(node)) {
 //			block.getParent().getChildren().remove(block);
 		}
@@ -258,7 +258,7 @@ public class BlockRule {
 	 */
 	private static boolean rule2(BlockVo block) {
 		if (block.getChildren().size()==1) {
-			Box node=block.getChildren().get(0).getBox();
+			Box node=block.getChildren().get(0).getBoxs().get(0);
 			if (isValidNode(node)&&!isTextNode(node)) {
 				return true;
 			}
@@ -273,7 +273,7 @@ public class BlockRule {
 	 * @return
 	 */
 	private static boolean rule3(BlockVo block) {
-		ElementBox node=(ElementBox)block.getBox();
+		ElementBox node=(ElementBox)block.getBoxs().get(0);
 		if (!node.isRootElement())
 			return false;
 
@@ -282,10 +282,10 @@ public class BlockRule {
 
 		for (BlockVo vipsBlock : block.getChildren())
 		{
-			if (vipsBlock.getBox().getNode().getNodeName().equals(node.getNode().getNodeName()))
+			if (vipsBlock.getBoxs().get(0).getNode().getNodeName().equals(node.getNode().getNodeName()))
 			{
 				result = true;
-				isOnlyOneDomSubTree(node.getNode(), vipsBlock.getBox().getNode(), result);
+				isOnlyOneDomSubTree(node.getNode(), vipsBlock.getBoxs().get(0).getNode(), result);
 
 				if (result)
 					cnt++;
@@ -305,7 +305,7 @@ public class BlockRule {
 	 * @return
 	 */
 	private static boolean rule4(BlockVo block) {
-		ElementBox node=(ElementBox)block.getBox();
+		ElementBox node=(ElementBox)block.getBoxs().get(0);
 		int size=node.getSubBoxList().size();
 		int count=0;
 		for (Box box : node.getSubBoxList()) {
@@ -354,7 +354,7 @@ public class BlockRule {
 	 * @return
 	 */
 	private static boolean rule5(BlockVo block) {
-		ElementBox node=(ElementBox)block.getBox();
+		ElementBox node=(ElementBox)block.getBoxs().get(0);
 		for (Box box : node.getSubBoxList()) {
 			if (!box.isBlock()) {
 				return true;
@@ -370,7 +370,7 @@ public class BlockRule {
 	 * @return
 	 */
 	private static boolean rule6(BlockVo block) {
-		ElementBox node=(ElementBox)block.getBox();
+		ElementBox node=(ElementBox)block.getBoxs().get(0);
 		for (Box box : node.getSubBoxList()) {
 			if (box.getNode().getNodeName().equals("hr")) {
 				return true;
@@ -380,13 +380,13 @@ public class BlockRule {
 	}
 	
 	/**
-	 * If the sum of all the child nodes¡¯ size is greater than this DOM node¡¯s size, 
+	 * If the sum of all the child nodesï¿½ï¿½ size is greater than this DOM nodeï¿½ï¿½s size, 
 	 * then divide this node.
 	 * @param block
 	 * @return
 	 */
 	private static boolean rule7(BlockVo block) {
-		ElementBox node=(ElementBox)block.getBox();
+		ElementBox node=(ElementBox)block.getBoxs().get(0);
 		int x=node.getContentX();
 		int y=node.getContentY();
 		int width=node.getContentWidth();
@@ -409,7 +409,7 @@ public class BlockRule {
 	}
 	
 	/**
-	 * If the background color of this node is different from one of its children¡¯s, 
+	 * If the background color of this node is different from one of its childrenï¿½ï¿½s, 
 	 * divide this node and at the same time, 
 	 * the child node with different background color will not bedivided in this round.
 	 * Set the DoC value (6-8) for the child node based on the html tag of the child node and the size of the child node.
@@ -418,11 +418,11 @@ public class BlockRule {
 	 */
 	private static boolean rule8(BlockVo block) {
 		boolean ret=false;
-		ElementBox node=(ElementBox)block.getBox();
+		ElementBox node=(ElementBox)block.getBoxs().get(0);
 		String bColor=node.getStylePropertyValue("background-color");
 		for (BlockVo b : block.getChildren()) {
-			if (b.getBox() instanceof ElementBox) {
-				ElementBox child = (ElementBox) b.getBox();
+			if (b.getBoxs().get(0) instanceof ElementBox) {
+				ElementBox child = (ElementBox) b.getBoxs().get(0);
 				String childColor = child.getStylePropertyValue("background-color");
 				if (!bColor.equals(childColor)) {
 					b.setDividable(false);
@@ -443,7 +443,7 @@ public class BlockRule {
 	 */
 	private static boolean rule9(BlockVo block) {
 		boolean ret=true;
-		ElementBox node=(ElementBox)block.getBox();
+		ElementBox node=(ElementBox)block.getBoxs().get(0);
 		int count=0;
 		for (Box box : node.getSubBoxList()) {
 			if (isTextNode(box)||isVirtualTextNode(box)) {
@@ -467,7 +467,7 @@ public class BlockRule {
 	 * @return
 	 */
 	private static boolean rule10(BlockVo block) {
-		ElementBox node=(ElementBox)block.getBox();
+		ElementBox node=(ElementBox)block.getBoxs().get(0);
 		int maxSize=0;
 		for (Box box : node.getSubBoxList()) {
 			int childSize=box.getContentX()*box.getContentY();
@@ -521,7 +521,7 @@ public class BlockRule {
 	}
 	
 	/**
-	 * ÊÇ·ñÓÐÓÐÐ§µÄ×Ó½Úµã
+	 * ï¿½Ç·ï¿½ï¿½ï¿½ï¿½ï¿½Ð§ï¿½ï¿½ï¿½Ó½Úµï¿½
 	 * @param node
 	 * @return
 	 */
@@ -536,7 +536,7 @@ public class BlockRule {
 	
 	/**
 	 * a node that can be seen through the browser. 
-	 * The node¡¯s width and height are not equal to zero.
+	 * The nodeï¿½ï¿½s width and height are not equal to zero.
 	 * @param node
 	 * @return
 	 */

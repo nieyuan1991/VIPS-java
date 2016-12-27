@@ -17,7 +17,6 @@ public class BlockExtraction {
 	private List<BlockVo> list=null;
 	private List<BlockVo> hrList=null;
 	BlockVo block=null;
-//	private int round=0;
 	
 	public BlockExtraction(Viewport viewport) {
 		super();
@@ -37,15 +36,16 @@ public class BlockExtraction {
 	}
 	
 	private void fillBlock(Box box,BlockVo block) {
-		block.setBox(box);
+		block.getBoxs().add(box);
 		if (box.getNode().getNodeName().equals("hr")) {
 			hrList.add(block);
 		}
 		if (! (box instanceof TextBox)) {
 			for (Box b : ((ElementBox) box).getSubBoxList()) {
-				block.getChildren().add(new BlockVo());
-				block.getChildren().get(block.getChildren().size()-1).setParent(block);
-				fillBlock(b, block.getChildren().get(block.getChildren().size()-1));
+				BlockVo bVo=new BlockVo();
+				bVo.setParent(block);
+				block.getChildren().add(bVo);
+				fillBlock(b, bVo);
 			} 
 		}
 	}
@@ -58,6 +58,13 @@ public class BlockExtraction {
 			for (BlockVo b : block.getChildren()) {
 				dividBlock(b);
 			}
+		}
+	}
+	
+	public void refreshBlock(BlockVo block) {
+		block.refresh();
+		for (BlockVo blockVo : block.getChildren()) {
+			refreshBlock(blockVo);
 		}
 	}
 	
