@@ -28,14 +28,14 @@ public class BlockExtraction {
 
 	public BlockVo service() {
 		Box body=viewport.getElementBoxByName("body", false);
-		fillBlock(body, block);
+		initBlock(body, block);
 		dividBlock(block);
+		BlockVo.refreshBlock(block);
 		filList(block);
-		System.out.println("countVisualBlock::"+list.size());
 		return block;
 	}
 	
-	private void fillBlock(Box box,BlockVo block) {
+	private void initBlock(Box box,BlockVo block) {
 		block.getBoxs().add(box);
 		if (box.getNode().getNodeName().equals("hr")) {
 			hrList.add(block);
@@ -45,26 +45,17 @@ public class BlockExtraction {
 				BlockVo bVo=new BlockVo();
 				bVo.setParent(block);
 				block.getChildren().add(bVo);
-				fillBlock(b, bVo);
+				initBlock(b, bVo);
 			} 
 		}
 	}
 	
 	private void dividBlock(BlockVo block) {
-//		round++;
-//		System.out.println("------------------------------round::"+round);
 		if (block.isDividable()&&BlockRule.dividable(block)) {
 			block.setVisualBlock(false);
 			for (BlockVo b : block.getChildren()) {
 				dividBlock(b);
 			}
-		}
-	}
-	
-	public void refreshBlock(BlockVo block) {
-		block.refresh();
-		for (BlockVo blockVo : block.getChildren()) {
-			refreshBlock(blockVo);
 		}
 	}
 	

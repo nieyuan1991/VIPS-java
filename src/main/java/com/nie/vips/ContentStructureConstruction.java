@@ -1,21 +1,15 @@
 package com.nie.vips;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import com.nie.vo.BlockVo;
 import com.nie.vo.SeparatorVo;
 
 public class ContentStructureConstruction {
 
-	private Set<String> idSet=null;
-	
-	
 	public ContentStructureConstruction() {
 		super();
-		this.idSet =new HashSet<>();
 	}
 
 	public void service(List<SeparatorVo> sepList,BlockVo block){
@@ -29,40 +23,48 @@ public class ContentStructureConstruction {
 					break;
 				}
 				if (sep.getOneSide() != null && sep.getOtherSide() != null) {
-					String oneId=sep.getOneSide().getId();
-					String otherId=sep.getOtherSide().getId();
-					loopBlock(block, oneId, otherId);
+					BlockVo one=sep.getOneSide();
+					BlockVo other=sep.getOtherSide();
+					BlockVo newBlock=new BlockVo();
+					newBlock.setParent(one.getParent());
+					newBlock.getBoxs().addAll(one.getBoxs());
+					newBlock.getBoxs().addAll(other.getBoxs());
+					newBlock.getChildren().addAll(one.getChildren());
+					newBlock.getChildren().addAll(other.getChildren());
+					newBlock.setDoC(sep.getWeight());
+					newBlock.refresh();
+					one.getParent().getChildren().add(newBlock);
+					one.setVisualBlock(false);
+					other.setVisualBlock(false);
+					
+					int sum=0;
+					for (SeparatorVo separator : temp) {
+						if (separator.getOneSide()==other) {
+							separator.setOneSide(newBlock);
+							sum++;
+						}
+						if (separator.getOtherSide()==one) {
+							separator.setOtherSide(newBlock);
+							sum++;
+						}
+						if (sum==2) {
+							break;
+						}
+					}
 				}
 				sepList.remove(sep);
 			}
 		}
 	}
-
-	private void loopBlock(BlockVo block, String oneId, String otherId) {
-		if (!mergeBlock(block.getChildren(), oneId, otherId)) {
-			for (BlockVo childBlock : block.getChildren()) {
-				loopBlock(childBlock, oneId, otherId);
-			}
-		}
-	}
 	
-	private boolean mergeBlock(List<BlockVo> blocks,String oneId,String otherId) {
-		for (BlockVo block : blocks) {
-			if (block.getId().equals(oneId)) {
-				List<BlockVo> childTemp = new ArrayList<>();
-				childTemp.addAll(block.getParent().getChildren());
-				for (BlockVo bVo : childTemp) {
-					if (bVo.getId().equals(otherId)) {
-						block.getBoxs().addAll(bVo.getBoxs());
-						block.getChildren().addAll(bVo.getChildren());
-						block.getParent().getChildren().remove(bVo);
-						return true;
-					}
-				} 
-				return false;
-			}
-		}
-		return false;
-	}
-	
+//	private BlockVo mergeBlock(List<BlockVo> blockList,String id){
+//		for (BlockVo bVo : blockList) {
+//			if (bVo.getId().equals(id)) {
+//				return bVo;
+//			}else {
+//				return mergeBlock(bVo.getChildren(), id);
+//			}
+//		}
+//		return null;
+//	}
 }

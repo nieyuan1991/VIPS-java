@@ -29,7 +29,7 @@ public class Vips {
 	private ImageOut imgOut=null;
 	
 	public Vips() {
-		setUrl("http://china.huanqiu.com/article/2016-12/9867032.html?from=bdwz");
+		setUrl("http://www.cankaoxiaoxi.com/roll10/bd/20161227/1556309.shtml");
 		getDomTree(url);
 		getViewport();
 		imgOut=new ImageOut(viewport.getWidth(), viewport.getHeight());
@@ -42,29 +42,33 @@ public class Vips {
 		BlockVo block=be.service();
 		List<BlockVo> blockList = be.getList();
 		int i=0;
-		while (checkDoC(blockList)&&i<5) {
-			imgOut.outBlock(blockList, "Block"+i);
+		while (checkDoC(blockList)&&i<3) {
+			System.out.println("blockList.size::"+blockList.size());
+			imgOut.outBlock(blockList, "Block-"+i);
+			
 			System.out.println("-----------------------------Separator Detection---------------------------------"+i);
 			SeparatorDetection sd = new SeparatorDetection(viewport.getWidth(), viewport.getHeight());
 			List<SeparatorVo> horizList = new ArrayList<>();
 			horizList.addAll(sd.service(blockList, SeparatorVo.TYPE_HORIZ));
-			imgOut.outSeparator(horizList, "horizontal"+i);
+			imgOut.outSeparator(horizList, "horizontal-"+i);
 			List<SeparatorVo> verticaList = new ArrayList<>();
 			verticaList.addAll(sd.service(blockList, SeparatorVo.TYPE_VERTICAL));
-			imgOut.outSeparator(verticaList, "vertica"+i);
+			imgOut.outSeparator(verticaList, "vertica-"+i);
+			
 			System.out.println("-----------------------Setting Weights for Separators----------------------------"+i);
 			List<BlockVo> hrList = be.getHrList();
 			SeparatorWeight sw = new SeparatorWeight();
 			sw.service(horizList, hrList);
 			sw.service(verticaList, hrList);
+			
 			System.out.println("-----------------------Content Structure Construction----------------------------"+i);
 			List<SeparatorVo> sepList = new ArrayList<>();
 			sepList.addAll(horizList);
-			sepList.addAll(verticaList);
+//			sepList.addAll(verticaList);
 			Collections.sort(sepList);
 			ContentStructureConstruction csc = new ContentStructureConstruction();
 			csc.service(sepList, block);
-			be.refreshBlock(block);
+			BlockVo.refreshBlock(block);
 			blockList.clear();
 			be.filList(block);
 			blockList=be.getList();

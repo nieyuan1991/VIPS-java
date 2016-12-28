@@ -14,7 +14,7 @@ import com.nie.vo.SeparatorVo;
 
 public class ImageOut {
 
-	private final String NAMEPRE=System.getProperty("user.dir")+"/";
+	private final String NAMEPRE=System.getProperty("user.dir")+"/q-";
 	private int width;
 	private int height;
 	BufferedImage bi=null;
@@ -28,7 +28,7 @@ public class ImageOut {
 	public void outImg(BufferedImage page) {
 		this.bi=page;
 		try{
-			String filename =  NAMEPRE + "page.png";
+			String filename =  NAMEPRE + "1page.png";
 			ImageIO.write(page, "png", new File(filename));
 		} catch (Exception e)
 		{

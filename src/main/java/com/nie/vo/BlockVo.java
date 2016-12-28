@@ -50,6 +50,13 @@ public class BlockVo {
 		}
 	}
 	
+	public static void refreshBlock(BlockVo block) {
+		block.refresh();
+		for (BlockVo blockVo : block.getChildren()) {
+			refreshBlock(blockVo);
+		}
+	}
+	
 	public String getId() {
 		return id;
 	}
