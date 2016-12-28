@@ -17,19 +17,19 @@ public class ImageOut {
 	private final String NAMEPRE=System.getProperty("user.dir")+"/q-";
 	private int width;
 	private int height;
-	BufferedImage bi=null;
+	private BufferedImage bi=null;
 	
-	public ImageOut(int width, int height) {
+	public ImageOut(BufferedImage bi) {
 		super();
-		this.width = width;
-		this.height = height;
+		this.bi = bi;
+		this.width = bi.getWidth();
+		this.height = bi.getHeight();
 	}
 
-	public void outImg(BufferedImage page) {
-		this.bi=page;
+	public void outImg() {
 		try{
 			String filename =  NAMEPRE + "1page.png";
-			ImageIO.write(page, "png", new File(filename));
+			ImageIO.write(bi, "png", new File(filename));
 		} catch (Exception e)
 		{
 			e.printStackTrace();
@@ -45,7 +45,7 @@ public class ImageOut {
 		for (BlockVo blockVo : block) {
 			if (blockVo.isVisualBlock()) {
 				g2d.fillRect(blockVo.getX(),blockVo.getY(),blockVo.getWidth(),blockVo.getHeight());
-//				g2d.drawRoundRect(box.getAbsoluteContentX(), box.getAbsoluteContentY(), box.getAvailableWidth(), box.getContentHeight(), 1, 1);
+//				g2d.drawRoundRect(blockVo.getX(),blockVo.getY(),blockVo.getWidth(),blockVo.getHeight(), 1, 1);
 			}
 		}
 		try {

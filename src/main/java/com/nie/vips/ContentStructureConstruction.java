@@ -25,7 +25,7 @@ public class ContentStructureConstruction {
 				if (sep.getOneSide() != null && sep.getOtherSide() != null) {
 					BlockVo one=sep.getOneSide();
 					BlockVo other=sep.getOtherSide();
-					BlockVo newBlock=new BlockVo();
+					BlockVo newBlock = new BlockVo();
 					newBlock.setParent(one.getParent());
 					newBlock.getBoxs().addAll(one.getBoxs());
 					newBlock.getBoxs().addAll(other.getBoxs());
@@ -36,23 +36,22 @@ public class ContentStructureConstruction {
 					one.getParent().getChildren().add(newBlock);
 					one.setVisualBlock(false);
 					other.setVisualBlock(false);
-					
-					int sum=0;
+					int sum = 0;
 					for (SeparatorVo separator : temp) {
-						if (separator.getOneSide()==other) {
+						if (separator.getOneSide() == other) {
 							separator.setOneSide(newBlock);
 							sum++;
 						}
-						if (separator.getOtherSide()==one) {
+						if (separator.getOtherSide() == one) {
 							separator.setOtherSide(newBlock);
 							sum++;
 						}
-						if (sum==2) {
+						if (sum == 2) {
 							break;
 						}
-					}
+					} 
+					sepList.remove(sep);
 				}
-				sepList.remove(sep);
 			}
 		}
 	}

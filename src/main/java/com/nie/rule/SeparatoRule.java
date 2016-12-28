@@ -88,6 +88,7 @@ public class SeparatoRule {
 	public static boolean verticalRule2(BlockVo block, SeparatorVo sep) {
 		int x = block.getX();
 		if (x < sep.getX() && (block.getWidth() + x) > (sep.getWidth() + sep.getX())) {
+			//&& block.getY()>sep.getY()&&(block.getY()+block.getHeight())<(sep.getY()+sep.getHeight())
 			return true;
 		}
 		return false;

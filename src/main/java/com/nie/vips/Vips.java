@@ -22,18 +22,19 @@ import com.nie.vo.SeparatorVo;
 public class Vips {
 	
 	private int PDoC=8;
+	private int round=1;
 	private URL url = null;
 	private DOMAnalyzer domAnalyzer = null;
 	private BrowserCanvas browserCanvas = null;
 	private Viewport viewport = null;
 	private ImageOut imgOut=null;
 	
-	public Vips() {
-		setUrl("http://www.cankaoxiaoxi.com/roll10/bd/20161227/1556309.shtml");
+	public Vips(String urlStr) {
+		setUrl(urlStr);
 		getDomTree(url);
 		getViewport();
-		imgOut=new ImageOut(viewport.getWidth(), viewport.getHeight());
-		imgOut.outImg(browserCanvas.getImage());
+		imgOut=new ImageOut(browserCanvas.getImage());
+		imgOut.outImg();
 	}
 	
 	public void service() {
@@ -42,7 +43,7 @@ public class Vips {
 		BlockVo block=be.service();
 		List<BlockVo> blockList = be.getList();
 		int i=0;
-		while (checkDoC(blockList)&&i<3) {
+		while (checkDoC(blockList)&&i<round) {
 			System.out.println("blockList.size::"+blockList.size());
 			imgOut.outBlock(blockList, "Block-"+i);
 			
@@ -127,6 +128,10 @@ public class Vips {
 		browserCanvas = new BrowserCanvas(domAnalyzer.getRoot(),
 				domAnalyzer, new java.awt.Dimension(1200, 600), url);
 		viewport = browserCanvas.getViewport();
+	}
+
+	public void setRound(int round) {
+		this.round = round;
 	}
 	
 }
