@@ -49,12 +49,13 @@ public class Vips {
 			
 			System.out.println("-----------------------------Separator Detection---------------------------------"+i);
 			SeparatorDetection sd = new SeparatorDetection(viewport.getWidth(), viewport.getHeight());
-			List<SeparatorVo> horizList = new ArrayList<>();
-			horizList.addAll(sd.service(blockList, SeparatorVo.TYPE_HORIZ));
-			imgOut.outSeparator(horizList, "horizontal-"+i);
 			List<SeparatorVo> verticaList = new ArrayList<>();
 			verticaList.addAll(sd.service(blockList, SeparatorVo.TYPE_VERTICAL));
 			imgOut.outSeparator(verticaList, "vertica-"+i);
+			
+			List<SeparatorVo> horizList = new ArrayList<>();
+			horizList.addAll(sd.service(blockList, SeparatorVo.TYPE_HORIZ));
+			imgOut.outSeparator(horizList, "horizontal-"+i);
 			
 			System.out.println("-----------------------Setting Weights for Separators----------------------------"+i);
 			List<BlockVo> hrList = be.getHrList();

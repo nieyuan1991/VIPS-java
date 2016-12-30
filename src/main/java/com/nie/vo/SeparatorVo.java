@@ -86,6 +86,19 @@ public class SeparatorVo implements Comparable<SeparatorVo>{
 	}
 
 	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof SeparatorVo) {
+			SeparatorVo sep=(SeparatorVo) obj;
+			if (sep.getType()==SeparatorVo.TYPE_VERTICAL) {
+				if (sep.getX()==x&&sep.getWidth()==width) {
+					return true;
+				}
+			}
+		}
+		return super.equals(obj);
+	}
+
+	@Override
 	public String toString() {
 		return "SeparatorVo [x=" + x + ", y=" + y + ", width=" + width + ", height=" + height + ", weight=" + weight
 				+ ", type=" + type + "]";

@@ -38,8 +38,8 @@ public class BlockVo {
 			}else {
 				int RBX=x+width;
 				int RBY=y+height;
-				int boxRBX=box.getAbsoluteContentX()+box.getAvailableWidth();
-				int boxRBY=box.getAbsoluteContentY()+box.getContentHeight();
+				int boxRBX=box.getAbsoluteContentX()+box.getWidth();//+box.getAvailableWidth()
+				int boxRBY=box.getAbsoluteContentY()+box.getHeight();//+box.getContentHeight()
 				RBX=boxRBX>RBX?boxRBX:RBX;
 				RBY=boxRBY>RBY?boxRBY:RBY;
 				x=box.getAbsoluteContentX()<x?box.getAbsoluteContentX():x;
